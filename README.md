@@ -28,7 +28,7 @@ Built for [ForgeHub](https://github.com/huchukato/ForgeHub), a desktop + self-ho
 | --- | --- |
 | `qwen_image_2.1_int8_convrot.safetensors` | [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) |
 | `qwen3-vl-8b-heretic-1.3.0-int8convrot.safetensors` | [craftingmod/Qwen3-VL-8B-Heretic-INT8](https://huggingface.co/craftingmod/Qwen3-VL-8B-Heretic-INT8) |
-| `qwen_image_2.1_vae_bf16.safetensors` | Comfy-Org/Qwen-Image-2.1 |
+| `qwen_image_2.1_vae_bf16.safetensors` | [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) |
 | `elusarcas-qwen2-1-detailer-v1.safetensors` | [reverentelusarca/elusarcas-qwen-2.1-detail-enhancer-lora](https://huggingface.co/reverentelusarca/elusarcas-qwen-2.1-detail-enhancer-lora) |
 | `ilustmix_v111.safetensors`, `pimpmypony_pmpInCaseEnhanced.safetensors` | [huchukato/garage](https://huggingface.co/huchukato/garage) |
 | `Qwen3.5-9B-…-Q6_K.gguf` + `mmproj-BF16.gguf` | [DavidAU/Qwen3.5-9B-The-Defiant-Fable-…-GGUF](https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF) |
