@@ -66,4 +66,4 @@ Built for [ForgeHub](https://github.com/huchukato/ForgeHub), a desktop + self-ho
 
 Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, job queue and outputs included. Paste your API key and it detects the endpoint by itself.
 
-[![Download ForgeHub](media/forgehub-release.jpg)](https://github.com/huchukato/ForgeHub/releases/latest)
+<a href="https://github.com/huchukato/ForgeHub/releases/latest"><img src="media/forgehub-release.jpg" width="640" alt="Download ForgeHub" /></a>
