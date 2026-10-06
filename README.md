@@ -8,6 +8,12 @@ A production-ready [Runpod Serverless](https://docs.runpod.io/serverless/overvie
 
 Built for [ForgeHub](https://github.com/huchukato/ForgeHub), a desktop + self-hosted frontend that drives these workflows — but the endpoint speaks plain Runpod API, so anything can call it.
 
+## Get the app
+
+Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, job queue and outputs included. Paste your API key and it detects the endpoint by itself.
+
+[![Download ForgeHub](media/forgehub-release.jpeg)](https://github.com/huchukato/ForgeHub/releases/latest)
+
 ## Workflows included
 
 | Workflow | Description |
@@ -60,9 +66,3 @@ Built for [ForgeHub](https://github.com/huchukato/ForgeHub), a desktop + self-ho
 ## Companion stack
 
 - 🎬 Video sibling: [huchukato/runpod-minimax-h3](https://github.com/huchukato/runpod-minimax-h3) (MiniMax H3 Turbo T2VA/I2VA/FL2VA/R2VA)
-
-## Get the app
-
-Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, job queue and outputs included. Paste your API key and it detects the endpoint by itself.
-
-[![Download ForgeHub](media/forgehub-release.jpeg)](https://github.com/huchukato/ForgeHub/releases/latest)
