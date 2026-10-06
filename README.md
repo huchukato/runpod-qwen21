@@ -60,7 +60,6 @@ Built for [ForgeHub](https://github.com/huchukato/ForgeHub), a desktop + self-ho
 ## Companion stack
 
 - 🎬 Video sibling: [huchukato/runpod-minimax-h3](https://github.com/huchukato/runpod-minimax-h3) (MiniMax H3 Turbo T2VA/I2VA/FL2VA/R2VA)
-- 🖥 Frontend: [ForgeHub](https://github.com/huchukato/ForgeHub)
 
 ## Get the app
 
