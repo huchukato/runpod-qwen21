@@ -59,6 +59,10 @@ def _http(path, payload=None, timeout=30):
         raise RuntimeError(f"ComfyUI {path} → HTTP {e.code}: {body}") from e
 
 
+_BOOT_DONE = threading.Event()
+_BOOT_ERR = None
+
+
 def _boot_comfy():
     # Extra flags come from COMFYUI_EXTRA_ARGS (space-separated). Keep the
     # default empty: --fast/--use-sage-attention/--async-offload corrupt the
@@ -80,6 +84,27 @@ def _boot_comfy():
         except Exception:
             time.sleep(2)
     raise RuntimeError("ComfyUI did not become ready in 600s")
+
+
+def _boot_in_bg():
+    # ComfyUI boots on a daemon thread so the runpod handler is live (and the
+    # `health` action answers) even while ComfyUI is still starting — or on
+    # machines where it can't start at all (e.g. Hub test pods without the
+    # network volume). Real jobs wait on _BOOT_DONE via _ensure_comfy().
+    global _BOOT_ERR
+    try:
+        _boot_comfy()
+    except Exception as exc:
+        _BOOT_ERR = exc
+        print(f"[handler] ComfyUI boot failed: {exc}", flush=True)
+    finally:
+        _BOOT_DONE.set()
+
+
+async def _ensure_comfy():
+    await asyncio.to_thread(_BOOT_DONE.wait)
+    if _BOOT_ERR is not None:
+        raise RuntimeError(f"ComfyUI failed to boot: {_BOOT_ERR} (see /workspace/comfy.log)")
 
 
 def _media_bytes(value):
@@ -424,9 +449,13 @@ async def handler(job):
         # also works on an endpoint deployed without the network volume.
         return {
             "status": "ok",
+            "comfyui": "failed" if _BOOT_ERR else ("ready" if _BOOT_DONE.is_set() else "booting"),
+            "comfyui_error": str(_BOOT_ERR) if _BOOT_ERR else None,
             "workflows": sorted(p.name for p in WORKFLOWS_DIR.glob("*.json")),
             "volume_mounted": os.path.isdir("/runpod-volume"),
         }
+    # Any real workload needs ComfyUI — wait for the background boot first.
+    await _ensure_comfy()
     # _patch uploads input media (blocking, up to minutes for video) — run it
     # off-thread so a cancel signal can still be delivered during uploads.
     if isinstance(inputs.get("prompt_graph"), dict):
@@ -460,5 +489,5 @@ async def handler(job):
 
 
 if __name__ == "__main__":
-    _boot_comfy()
+    threading.Thread(target=_boot_in_bg, daemon=True).start()
     runpod.serverless.start({"handler": handler})
