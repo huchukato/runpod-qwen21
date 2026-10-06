@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "health_check",
+      "input": { "action": "health" },
+      "timeout": 300000
+    }
+  ],
+  "config": {
+    "gpuTypeId": "NVIDIA GeForce RTX 4090",
+    "gpuCount": 1,
+    "env": [
+      { "key": "VOLUME_AUTOPOPULATE", "value": "false" }
+    ],
+    "allowedCudaVersions": ["12.8", "12.9", "13.0", "13.1", "13.2"]
+  }
+}

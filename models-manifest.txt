@@ -1,0 +1,19 @@
+# Model manifest for the Qwen Image 2.1 serverless stack (~45GB total).
+# Format (tab-separated): <models subdir>	<filename>	<URL>
+# Consumed by populate-volume.sh — missing files are downloaded to the
+# attached network volume at worker boot (VOLUME_AUTOPOPULATE=false to skip).
+#
+# ── DiT — official Comfy-Org INT8 ConvRot ──
+diffusion_models	qwen_image_2.1_int8_convrot.safetensors	https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors
+# ── Text encoder: Heretic (abliterated) Qwen3-VL-8B INT8 ConvRot ──
+text_encoders	qwen3-vl-8b-heretic-1.3.0-int8convrot.safetensors	https://huggingface.co/craftingmod/Qwen3-VL-8B-Heretic-INT8/resolve/main/qwen3-vl-8b-heretic-1.3.0-int8convrot.safetensors
+# ── VAE bf16 ──
+vae	qwen_image_2.1_vae_bf16.safetensors	https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors
+# ── Elusarcas detail-enhancer LoRA ──
+loras	elusarcas-qwen2-1-detailer-v1.safetensors	https://huggingface.co/reverentelusarca/elusarcas-qwen-2.1-detail-enhancer-lora/resolve/main/elusarcas-qwen2-1-detailer-v1.safetensors
+# ── Pony / Illustrious checkpoints ──
+checkpoints	ilustmix_v111.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/illustrious/ilustmix_v111.safetensors
+checkpoints	pimpmypony_pmpInCaseEnhanced.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpInCaseEnhanced.safetensors
+# ── QwenVL-Mod enhancer LLM: Defiant-Fable NEO-MAX Q6_K + mmproj ──
+LLM/GGUF	Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf
+LLM/GGUF	mmproj-BF16.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/mmproj-BF16.gguf
