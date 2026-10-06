@@ -61,3 +61,9 @@ Built for [ForgeHub](https://github.com/huchukato/ForgeHub), a desktop + self-ho
 
 - 🎬 Video sibling: [huchukato/runpod-minimax-h3](https://github.com/huchukato/runpod-minimax-h3) (MiniMax H3 Turbo T2VA/I2VA/FL2VA/R2VA)
 - 🖥 Frontend: [ForgeHub](https://github.com/huchukato/ForgeHub)
+
+## Get the app
+
+Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, job queue and outputs included. Paste your API key and it detects the endpoint by itself.
+
+[![Download ForgeHub](media/forgehub-release.jpg)](https://github.com/huchukato/ForgeHub/releases/latest)
