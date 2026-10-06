@@ -1,5 +1,5 @@
 {
-  "title": "Qwen Image 2.1 — Wildcard Stack",
+  "title": "Qwen Image 2.1 - Generate & Edit",
   "description": "ComfyUI serverless worker for Qwen Image 2.1: text-to-image and image editing with wildcard prompt expansion, a Qwen3-VL prompt enhancer, and Pony/Illustrious checkpoint workflows. Models auto-download to your network volume on first boot.",
   "type": "serverless",
   "category": "image",
@@ -10,7 +10,12 @@
     "containerDiskInGb": 30,
     "gpuCount": 1,
     "gpuIds": "ADA_48_PRO",
-    "allowedCudaVersions": ["12.9", "13.0", "13.1", "13.2"],
+    "allowedCudaVersions": [
+      "12.9",
+      "13.0",
+      "13.1",
+      "13.2"
+    ],
     "env": [
       {
         "key": "VOLUME_AUTOPOPULATE",
