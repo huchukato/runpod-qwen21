@@ -17,3 +17,7 @@ checkpoints	pimpmypony_pmpInCaseEnhanced.safetensors	https://huggingface.co/huch
 # ── QwenVL-Mod enhancer LLM: Defiant-Fable NEO-MAX Q6_K + mmproj ──
 LLM/GGUF	Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf
 LLM/GGUF	mmproj-BF16.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/mmproj-BF16.gguf
+# ── Face Detailer (Easy-Use → Impact) detector models ──
+ultralytics/bbox	face_yolov8m.pt	https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
+sams	sam_vit_b_01ec64.pth	https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+checkpoints	pimpmypony_pmpIncaseStyle.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpIncaseStyle.safetensors

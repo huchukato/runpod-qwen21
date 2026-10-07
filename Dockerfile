@@ -26,7 +26,10 @@ RUN dl() { \
     dl huchukato ComfyUI-QwenVL-Mod main ComfyUI-QwenVL-Mod && \
     dl huchukato ComfyUI-TagForge main ComfyUI-TagForge && \
     dl pixaroma ComfyUI-Pixaroma main ComfyUI-Pixaroma && \
-    dl kijai ComfyUI-KJNodes main ComfyUI-KJNodes
+    dl kijai ComfyUI-KJNodes main ComfyUI-KJNodes && \
+    dl yolain ComfyUI-Easy-Use main ComfyUI-Easy-Use && \
+    dl ltdrdata ComfyUI-Impact-Pack Main ComfyUI-Impact-Pack && \
+    dl ltdrdata ComfyUI-Impact-Subpack main ComfyUI-Impact-Subpack
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -46,7 +49,7 @@ RUN bash -c 'cd /opt/comfyui-baked/custom_nodes && for node_dir in */; do \
 # Model dirs (empty — real models come from the network volume via
 # extra_model_paths.yaml written by the entrypoint)
 # ──────────────────────────────────────────────────────────────────────────────
-RUN mkdir -p /opt/comfyui-baked/models/{vae,diffusion_models,unet,text_encoders,clip_projections,loras,checkpoints,LLM,clip,clip_vision}
+RUN mkdir -p /opt/comfyui-baked/models/{vae,diffusion_models,unet,text_encoders,clip_projections,loras,checkpoints,LLM,clip,clip_vision,ultralytics/bbox,sams}
 
 ENV HF_TOKEN=""
 
