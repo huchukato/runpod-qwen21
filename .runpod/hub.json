@@ -6,7 +6,6 @@
   "iconUrl": "https://raw.githubusercontent.com/huchukato/runpod-qwen21/main/media/icon.png",
   "config": {
     "runsOn": "GPU",
-    "endpointType": "LB",
     "containerDiskInGb": 30,
     "gpuCount": 1,
     "gpuIds": "ADA_48_PRO",
@@ -22,7 +21,7 @@
         "input": {
           "type": "boolean",
           "name": "Auto-download models",
-          "description": "Download missing models to the attached network volume at worker boot. Requires a ≥60GB network volume attached to the endpoint — strongly recommended.",
+          "description": "Download missing models to the attached network volume at worker boot. Requires a \u226560GB network volume attached to the endpoint \u2014 strongly recommended.",
           "default": true,
           "trueValue": "true",
           "falseValue": "false"
@@ -33,7 +32,7 @@
         "input": {
           "name": "Hugging Face token",
           "type": "string",
-          "description": "Optional — only needed if you edit models-manifest.txt to pull from gated Hugging Face repos. All bundled models are public.",
+          "description": "Optional \u2014 only needed if you edit models-manifest.txt to pull from gated Hugging Face repos. All bundled models are public.",
           "default": "",
           "advanced": true
         }
