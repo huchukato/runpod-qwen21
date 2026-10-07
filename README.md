@@ -20,7 +20,7 @@ Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, 
 | --- | --- |
 | `QwenImage21-T2I-Wildcards.json` | Text-to-image, wildcard expansion + QwenVL prompt enhancer, detail LoRA |
 | `QwenImageEdit21-Wildcards.json` | Instruction-based image editing (1–2 reference images) |
-| `PimpMyPony-TagComplete.json` | Pony/Illustrious txt2img with tag completion |
+| `PimpMyPony-HiResFix-FaceDet.json` | Pony/Illustrious txt2img — wildcards + TagForge, hires fix e face detailer in gruppi bypassabili |
 
 ## Requirements
 

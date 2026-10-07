@@ -144,10 +144,11 @@ def _load_workflow(name):
 
 def _patch(prompt, job):
     cfg = MINIMAX_CONFIGS.get(job.get("config"))
-    images = [_upload(f"job_{uuid.uuid4().hex[:8]}_{i}.png", _media_bytes(v)) for i, v in enumerate(job.get("images") or [])]
+    base = re.sub(r"[^\w.-]+", "-", str(job.get("job_name") or f"job_{uuid.uuid4().hex[:8]}")).strip("-")
+    images = [_upload(f"{base}_{i}.png", _media_bytes(v)) for i, v in enumerate(job.get("images") or [])]
     video_name = None
     if job.get("video"):
-        video_name = _upload(f"job_{uuid.uuid4().hex[:8]}.mp4", _media_bytes(job["video"]))
+        video_name = _upload(f"{base}.mp4", _media_bytes(job["video"]))
 
     def _find_file(kind, needle):
         """Locate a model file under the volume + local model dirs."""
@@ -341,11 +342,11 @@ def _patch(prompt, job):
     # An explicit job["seed"] pins every seed consumer to the same value.
     job_seed = job.get("seed")
     if job_seed is None:
-        job_seed = random.randrange(0, 2**63)
+        job_seed = random.randrange(0, 2**32)
     for node in prompt.values():
         inp = node.get("inputs", {})
         class_type = node.get("class_type", "")
-        node_seed = job_seed % (2**32) if class_type.startswith("QwenVL_") else job_seed
+        node_seed = job_seed % (2**32)
         if class_type == "PixaromaSeed":
             inp["seed"] = node_seed
             try:

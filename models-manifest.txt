@@ -18,6 +18,14 @@ checkpoints	pimpmypony_pmpInCaseEnhanced.safetensors	https://huggingface.co/huch
 LLM/GGUF	Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf
 LLM/GGUF	mmproj-BF16.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/mmproj-BF16.gguf
 # ── Face Detailer (Easy-Use → Impact) detector models ──
-ultralytics/bbox	face_yolov8m.pt	https://huggingface.co/Bingsu/adetailer/resolve/main/face_yolov8m.pt
-sams	sam_vit_b_01ec64.pth	https://dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth
+ultralytics/bbox	face_yolov8m.pt	https://huggingface.co/huchukato/garage/resolve/main/ultralytics/bbox/face_yolov8m.pt
+sams	sam_vit_b_01ec64.pth	https://huggingface.co/huchukato/garage/resolve/main/sams/sam_vit_b_01ec64.pth
 checkpoints	pimpmypony_pmpIncaseStyle.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpIncaseStyle.safetensors
+checkpoints	pimpmypony_pmpSemiRealAnime.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpSemiRealAnime.safetensors
+# ── HiresFix upscalers (easy hiresFix → models/upscale_models) ──
+upscale_models	4xUltrasharp_4xUltrasharpV10.pth	https://huggingface.co/huchukato/garage/resolve/main/upscale_models/4xUltrasharp_4xUltrasharpV10.pth
+upscale_models	4x-AnimeSharp.pth	https://huggingface.co/huchukato/garage/resolve/main/upscale_models/4x-AnimeSharp.pth
+upscale_models	RealESRGAN_x4plus.pth	https://huggingface.co/huchukato/garage/resolve/main/upscale_models/RealESRGAN_x4plus.pth
+# ── Prebuilt TensorRT engines (RTX PRO 6000, TRT 10.15.1.29) — skips compile at first use ──
+tensorrt/rife	rife425_ensemble_False_scale_1_sim_fp16_large_1x3x720x720_1x3x1440x1440_1x3x1920x1920_10.15.1.29.trt	https://huggingface.co/huchukato/garage/resolve/main/tensorrt/rife/rife425_ensemble_False_scale_1_sim_fp16_large_1x3x720x720_1x3x1440x1440_1x3x1920x1920_10.15.1.29.trt
+tensorrt/upscaler	2xLexicaRRDBNet_fp16_1x3x256x256_2x3x512x512_2x3x2048x2048_10.15.1.29.trt	https://huggingface.co/huchukato/garage/resolve/main/tensorrt/upscaler/2xLexicaRRDBNet_fp16_1x3x256x256_2x3x512x512_2x3x2048x2048_10.15.1.29.trt
