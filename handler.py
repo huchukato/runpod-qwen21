@@ -41,8 +41,8 @@ JOB_TIMEOUT_S = int(os.environ.get("JOB_TIMEOUT_S", "1800"))
 MINIMAX_CONFIGS = {
     "native":            {"unet": "fl2va",  "steps": 20, "sampler": "res_multistep", "scheduler": "simple", "shift_video": 12.0, "shift_audio": 3.0, "lora": None, "tau": None},
     "native_turbo":      {"unet": "fl2va",  "steps": 8,  "sampler": "euler",         "scheduler": "simple", "shift_video": 6.0,  "shift_audio": 3.0, "lora": "fl2v_turbo",  "tau": 1.3},
-    "r2va_native":       {"unet": "ref2va", "steps": 20, "sampler": "res_multistep", "scheduler": "simple", "shift_video": 12.0, "shift_audio": 3.0, "lora": None, "tau": None},
-    "r2va_native_turbo": {"unet": "ref2va", "steps": 8,  "sampler": "euler",         "scheduler": "simple", "shift_video": 6.0,  "shift_audio": 3.0, "lora": "ref2v_turbo", "tau": 1.3},
+    "r2va_singularity":       {"unet": "Singularity", "steps": 20, "sampler": "res_multistep", "scheduler": "simple", "lora": None, "tau": None, "sigma_off": True},
+    "r2va_singularity_turbo": {"unet": "Singularity", "steps": 6,  "sampler": "euler",         "scheduler": "beta",   "lora": "ref2v_turbo_4step", "tau": 1.3, "sigma_off": True},
     "10eros":            {"unet": "10eros", "steps": 20, "sampler": "res_multistep", "scheduler": "simple", "shift_video": 12.0, "shift_audio": 3.0, "lora": None, "tau": None},
     "10eros_turbo":      {"unet": "10eros", "steps": 8,  "sampler": "euler",         "scheduler": "simple", "shift_video": 6.0,  "shift_audio": 3.0, "lora": "fusion_turbo", "tau": 1.3},
 }
@@ -162,7 +162,9 @@ def _patch(prompt, job):
         return Path(hits[0]).name if hits else None
 
     img_idx = 0
-    for node in prompt.values():
+    drop_lora = None
+    sigma_off = {}
+    for nid, node in prompt.items():
         ct = node.get("class_type", "")
         inp = node.get("inputs", {})
 
@@ -202,18 +204,36 @@ def _patch(prompt, job):
                 inp["length"] = sec * 24
             elif "value" in inp and ct.startswith("Primitive"):
                 inp["value"] = sec
-        if cfg is not None and "lora_name" in inp:
-            if cfg["lora"]:
-                found = _find_file("loras", cfg["lora"])
-                if found:
+        if "lora_name" in inp:
+            cur_lora = str(inp.get("lora_name", "")).lower()
+            if "realism" in cur_lora or "character_swap" in cur_lora:
+                # Style LoRA slot (Singularity recipe): job.lora =
+                # none | realism | char_swap. Disabled/missing → drop the
+                # node entirely below (ComfyUI validates lora_name even at
+                # strength 0), so mark it for removal.
+                sel = job.get("lora") or "none"
+                drop_lora = nid
+                if sel != "none":
+                    needle = {"realism": "realism", "char_swap": "character_swap"}.get(sel, sel)
+                    found = _find_file("loras", needle)
+                    if not found:
+                        raise RuntimeError(f"Style LoRA '{sel}' not found on the volume")
                     inp["lora_name"] = found
                     for skey in ("strength_model", "strength_clip"):
                         if skey in inp:
                             inp[skey] = 1.0
-            else:
-                for skey in ("strength_model", "strength_clip"):
-                    if skey in inp:
-                        inp[skey] = 0.0
+            elif cfg is not None:
+                if cfg["lora"]:
+                    found = _find_file("loras", cfg["lora"])
+                    if found:
+                        inp["lora_name"] = found
+                        for skey in ("strength_model", "strength_clip"):
+                            if skey in inp:
+                                inp[skey] = 1.0
+                else:
+                    for skey in ("strength_model", "strength_clip"):
+                        if skey in inp:
+                            inp[skey] = 0.0
         elif cfg is not None and "unet_name" in inp:  # MiniMax H3 generator/enhancer node
             needle = cfg["unet"]
             if needle.lower() not in str(inp.get("unet_name", "")).lower():
@@ -226,6 +246,32 @@ def _patch(prompt, job):
                     inp[wkey] = cfg[ckey]
             if cfg.get("tau") and "tau" in inp:
                 inp["tau"] = cfg["tau"]
+        if cfg is not None:
+            # Sampler/step/shift values live on dedicated nodes, not on the
+            # unet loader — patch them by class_type or the preset would only
+            # swap weights/LoRA while the template settings silently win.
+            if ct == "KSamplerSelect" and "sampler_name" in inp:
+                inp["sampler_name"] = cfg["sampler"]
+            elif ct == "BasicScheduler":
+                for wkey in ("steps", "scheduler"):
+                    if wkey in inp:
+                        inp[wkey] = cfg[wkey]
+            elif ct == "MiniMaxH3SigmaShift":
+                if cfg.get("sigma_off"):
+                    # API format ignores UI bypass modes — physically remove
+                    # the node and rewire its consumers to its model source.
+                    sigma_off[nid] = inp.get("model")
+                else:
+                    for wkey in ("shift_video", "shift_audio"):
+                        if wkey in inp:
+                            inp[wkey] = cfg[wkey]
+    if sigma_off:
+        for nid in sigma_off:
+            del prompt[nid]
+        for n in prompt.values():
+            for k, v in n.get("inputs", {}).items():
+                if isinstance(v, list) and v and v[0] in sigma_off:
+                    n["inputs"][k] = sigma_off[v[0]]
     # LoadImage nodes left on the template filename (fewer uploads than loaders —
     # e.g. single-image edits with an optional image2) would fail validation;
     # drop them and unlink their consumers instead.
@@ -233,6 +279,11 @@ def _patch(prompt, job):
     dead = [nid for nid, n in prompt.items()
             if "LoadImage" in n.get("class_type", "")
             and n.get("inputs", {}).get("image") not in uploaded]
+    # Same for reference video loaders left on their template value when the
+    # job carries no video (R2VA recipes have an optional ref_videos input).
+    dead += [nid for nid, n in prompt.items()
+             if "LoadVideo" in n.get("class_type", "")
+             and n.get("inputs", {}).get("video") != video_name]
     if dead:
         for nid in dead:
             del prompt[nid]
@@ -240,6 +291,15 @@ def _patch(prompt, job):
             for k in [k for k, v in n.get("inputs", {}).items()
                       if isinstance(v, list) and v and v[0] in dead]:
                 del n["inputs"][k]
+    if drop_lora is not None:
+        # Rewire the dropped style LoRA's consumers to its model source.
+        src = prompt[drop_lora].get("inputs", {}).get("model")
+        del prompt[drop_lora]
+        if isinstance(src, list):
+            for n in prompt.values():
+                for k, v in n.get("inputs", {}).items():
+                    if isinstance(v, list) and v and v[0] == drop_lora:
+                        n["inputs"][k] = src
     # Post-processing toggles: the graph chain is  save.images <- rife.frames
     # <- upscale.images <- VAEDecode.  upscale=false rewires rife.frames to the
     # decoder output; rife=false rewires save.images to rife's own source.
@@ -473,6 +533,7 @@ async def handler(job):
     comfy_log = Path("/workspace/comfy.log")
     log_mark = comfy_log.stat().st_size if comfy_log.is_file() else 0
     history = await _queue_and_wait(prompt)
+    print(f"[handler] comfy execution took {time.time() - started:.1f}s", flush=True)
     outputs, texts = await asyncio.to_thread(_collect_outputs, history, prompt)
     try:  # surface ComfyUI warnings/errors from this job in the worker log
         with open(comfy_log, "rb") as f:

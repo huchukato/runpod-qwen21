@@ -28,6 +28,7 @@ runpod_volume:
   LLM: LLM
   clip: clip
   clip_vision: clip_vision
+  vae_approx: vae_approx
   ultralytics: ultralytics
   sams: sams
   upscale_models: upscale_models

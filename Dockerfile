@@ -1,14 +1,14 @@
-# runpod-qwen21 — Qwen Image 2.1 serverless worker (CUDA 13.0)
+# ComfyUI-RunPod-Serverless — Qwen Image Edit 2.1 variant (CUDA 13.0)
 #
 # - Qwen Image 2.1 official INT8 ConvRot DiT + Qwen3-VL-8B Heretic INT8 TE +
-#   bf16 VAE + detailer LoRA + Pony/Illustrious checkpoints, loaded from the
-#   network volume (~45GB stack; needs a 48GB GPU)
+#   bf16 VAE + detailer LoRA, loaded from the network volume (~30GB on top
+#   of the shared stack; needs a 48GB GPU)
 # - Missing volume files are auto-downloaded at worker boot from
 #   models-manifest.txt (populate-volume.sh, VOLUME_AUTOPOPULATE=false to skip)
 # - runpod serverless handler drives ComfyUI per-job (handler.py)
 #
 # Build (from repo root):
-#   docker build -t huchukato/comfyui-runpod-serverless:qwen21 .
+#   docker build -f Dockerfile.qwen21 -t huchukato/comfyui-runpod-serverless:qwen21 .
 
 FROM huchukato/comfyui-base:cu130
 
@@ -24,7 +24,7 @@ RUN dl() { \
     cd /opt/comfyui-baked/custom_nodes && \
     dl rgthree rgthree-comfy main rgthree-comfy && \
     dl huchukato ComfyUI-QwenVL-Mod main ComfyUI-QwenVL-Mod && \
-    dl huchukato ComfyUI-TagForge main ComfyUI-TagForge && \
+    dl huchukato ComfyUI-TagForge v2.3.0 ComfyUI-TagForge && \
     dl pixaroma ComfyUI-Pixaroma main ComfyUI-Pixaroma && \
     dl kijai ComfyUI-KJNodes main ComfyUI-KJNodes && \
     dl yolain ComfyUI-Easy-Use main ComfyUI-Easy-Use && \
@@ -49,7 +49,7 @@ RUN bash -c 'cd /opt/comfyui-baked/custom_nodes && for node_dir in */; do \
 # Model dirs (empty — real models come from the network volume via
 # extra_model_paths.yaml written by the entrypoint)
 # ──────────────────────────────────────────────────────────────────────────────
-RUN mkdir -p /opt/comfyui-baked/models/{vae,diffusion_models,unet,text_encoders,clip_projections,loras,checkpoints,LLM,clip,clip_vision,ultralytics/bbox,sams}
+RUN mkdir -p /opt/comfyui-baked/models/{vae,vae_approx,diffusion_models,unet,text_encoders,clip_projections,loras,checkpoints,LLM,clip,clip_vision,ultralytics/bbox,sams}
 
 ENV HF_TOKEN=""
 
@@ -62,7 +62,7 @@ RUN WILDCARD_DIR="/opt/comfyui-baked/custom_nodes/ComfyUI-TagForge/wildcards" &&
               pmp/blwjob.yaml pmp/prmpt.yaml pmp/qwen21.yaml \
               pmp/prmpt/acc.yaml pmp/prmpt/char.yaml pmp/prmpt/clths.yaml pmp/prmpt/exprss.yaml \
               pmp/prmpt/hair.yaml pmp/prmpt/imgcmp.yaml pmp/prmpt/lctns.yaml pmp/prmpt/light.yaml pmp/prmpt/lens.yaml \
-              pmp/prmpt/pose.yaml pmp/prmpt/styles.yaml; do \
+              pmp/prmpt/pose.yaml pmp/prmpt/styles.yaml pmp/prmpt/dynmc.yaml; do \
         mkdir -p "$WILDCARD_DIR/$(dirname "$wf")" && \
         wget -q --tries=3 --timeout=30 "$WILDCARD_BASE/$wf" -O "$WILDCARD_DIR/$wf" || \
         echo "⚠️ wildcard $wf download failed"; \

@@ -1,25 +1,48 @@
-# Model manifest for the Qwen Image 2.1 serverless stack (~45GB total).
+# Model manifest for the MMH3 INT8 serverless stack (~100GB total).
 # Format (tab-separated): <models subdir>	<filename>	<URL>
-# Consumed by populate-volume.sh — missing files are downloaded to the
-# attached network volume at worker boot (VOLUME_AUTOPOPULATE=false to skip).
+# Consumed by populate-volume.sh (pods/temp workers) and the serverless
+# entrypoint auto-provisioning. Keep in sync — don't edit the dl() lists.
 #
-# ── DiT — official Comfy-Org INT8 ConvRot ──
+# ── DiT — Comfy-Org INT8 ConvRot ──
+diffusion_models	minimax_h3_fl2va_pruned_int8_convrot.safetensors	https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors
+# ── 10Eros-Max Hybrid Beta5 INT8 (non-turbo — turbo via LoRA) ──
+diffusion_models	10Eros_Max_h3_hybrid_beta5_int8.safetensors	https://huggingface.co/TenStrip/10Eros-Max/resolve/main/10Eros_Max_h3_hybrid_beta5_int8.safetensors
+# ── Singularity fusion (T2V/I2V/R2V/V2V in un unet solo) — NO ref_lora rank_256 sopra ──
+diffusion_models	Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors	https://huggingface.co/WarmBloodAban/Minimax-h3_Singularity/resolve/main/Minimax-h3_Singularity_ref2va_Pruned_v1.3_int8.safetensors
+# ── Text encoder: Qwen3-VL-32B Ultra Heretic NVFP4 ──
+text_encoders	qwen3vl_32b_heretic_minimax_h3_nvfp4.safetensors	https://huggingface.co/Momoking/Qwen3-VL-32B-Heretic-MiniMax-H3-NVFP4/resolve/main/qwen3vl_32b_heretic_minimax_h3_nvfp4.safetensors
+# ── lightx2v Turbo LoRAs 8-step 768p ──
+loras	minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors	https://huggingface.co/lightx2v/Minimax-h3-Turbo/resolve/main/minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_bf16.safetensors
+loras	minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors	https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_ref2v_turbo_4step_v0.1_comfyui_bf16.safetensors
+# ── akatz Character-Swap LoRA — ref2v character swap ──
+loras	h3_character_swap_pro4500_1000.safetensors	https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA/resolve/main/h3_character_swap_pro4500_1000.safetensors
+# ── fal Realism People LoRA (trigger: r34l1sm) ──
+loras	h3-realism-people-t2v-i2v-r2v.safetensors	https://huggingface.co/fal/MiniMax-H3-Realism-People-LoRA/resolve/main/h3-realism-people-t2v-i2v-r2v.safetensors
+# ── TenStrip fusion turbo LoRA — turbo for the 10Eros non-turbo DiT ──
+loras	lightx2v_hybrid-4to8step-full-fusion_Turbo_pruned.safetensors	https://huggingface.co/TenStrip/MinimaxH3-Turbo_Shenanigans/resolve/main/lightx2v_hybrid-4to8step-full-fusion_Turbo_pruned.safetensors
+# ── Face Detailer (Easy-Use → Impact) detector models ──
+ultralytics/bbox	face_yolov8m.pt	https://huggingface.co/huchukato/garage/resolve/main/ultralytics/bbox/face_yolov8m.pt
+sams	sam_vit_b_01ec64.pth	https://huggingface.co/huchukato/garage/resolve/main/sams/sam_vit_b_01ec64.pth
+# ── VAEs ──
+vae	minimax_h3_video_vae_fp16.safetensors	https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors
+vae	minimax_h3_audio_vae_fp32.safetensors	https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors
+# ── Tiny H3 VAE for fast previews (Kijai TAE) → models/vae_approx ──
+vae_approx	taeh3.safetensors	https://huggingface.co/Kijai/MiniMax-H3-TAE/resolve/main/vae_approx/taeh3.safetensors
+# ── QwenVL-Mod enhancer LLM: Defiant-Fable NEO-MAX Q6_K + mmproj ──
+LLM/GGUF	Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf
+LLM/GGUF	mmproj-BF16.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/mmproj-BF16.gguf
+# ══ Qwen Image Edit 2.1 stack (qwen21 tag) ══
+# ── DiT: official Comfy-Org INT8 ConvRot ──
 diffusion_models	qwen_image_2.1_int8_convrot.safetensors	https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/diffusion_models/qwen_image_2.1_int8_convrot.safetensors
-# ── Text encoder: Heretic (abliterated) Qwen3-VL-8B INT8 ConvRot ──
+# ── Text encoder: Heretic (uncensored) Qwen3-VL-8B INT8 ConvRot ──
 text_encoders	qwen3-vl-8b-heretic-1.3.0-int8convrot.safetensors	https://huggingface.co/craftingmod/Qwen3-VL-8B-Heretic-INT8/resolve/main/qwen3-vl-8b-heretic-1.3.0-int8convrot.safetensors
 # ── VAE bf16 ──
 vae	qwen_image_2.1_vae_bf16.safetensors	https://huggingface.co/Comfy-Org/Qwen-Image-2.1/resolve/main/vae/qwen_image_2.1_vae_bf16.safetensors
 # ── Elusarcas detail-enhancer LoRA ──
 loras	elusarcas-qwen2-1-detailer-v1.safetensors	https://huggingface.co/reverentelusarca/elusarcas-qwen-2.1-detail-enhancer-lora/resolve/main/elusarcas-qwen2-1-detailer-v1.safetensors
-# ── Pony / Illustrious checkpoints ──
+# ══ Pony / Illustrious checkpoints (qwen21 endpoint) ══
 checkpoints	ilustmix_v111.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/illustrious/ilustmix_v111.safetensors
 checkpoints	pimpmypony_pmpInCaseEnhanced.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpInCaseEnhanced.safetensors
-# ── QwenVL-Mod enhancer LLM: Defiant-Fable NEO-MAX Q6_K + mmproj ──
-LLM/GGUF	Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/Qwen3.5-9B-The-Defiant-Fable-Uncnr-Heretic-NEO-MAX-Q6_K.gguf
-LLM/GGUF	mmproj-BF16.gguf	https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF/resolve/main/mmproj-BF16.gguf
-# ── Face Detailer (Easy-Use → Impact) detector models ──
-ultralytics/bbox	face_yolov8m.pt	https://huggingface.co/huchukato/garage/resolve/main/ultralytics/bbox/face_yolov8m.pt
-sams	sam_vit_b_01ec64.pth	https://huggingface.co/huchukato/garage/resolve/main/sams/sam_vit_b_01ec64.pth
 checkpoints	pimpmypony_pmpIncaseStyle.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpIncaseStyle.safetensors
 checkpoints	pimpmypony_pmpSemiRealAnime.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpSemiRealAnime.safetensors
 # ── HiresFix upscalers (easy hiresFix → models/upscale_models) ──
