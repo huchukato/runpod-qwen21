@@ -1,4 +1,4 @@
-# ComfyUI-RunPod-Serverless — Qwen Image Edit 2.1 variant (CUDA 13.0)
+# runpod-qwen21 — Qwen Image 2.1 serverless worker (CUDA 13.0)
 #
 # - Qwen Image 2.1 official INT8 ConvRot DiT + Qwen3-VL-8B Heretic INT8 TE +
 #   bf16 VAE + detailer LoRA, loaded from the network volume (~30GB on top
@@ -8,7 +8,7 @@
 # - runpod serverless handler drives ComfyUI per-job (handler.py)
 #
 # Build (from repo root):
-#   docker build -f Dockerfile.qwen21 -t huchukato/comfyui-runpod-serverless:qwen21 .
+#   docker build -t huchukato/comfyui-runpod-serverless:qwen21 .
 
 FROM huchukato/comfyui-base:cu130
 
