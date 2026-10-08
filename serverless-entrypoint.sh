@@ -29,10 +29,22 @@ runpod_volume:
   clip: clip
   clip_vision: clip_vision
   vae_approx: vae_approx
-  ultralytics: ultralytics
+  ultralytics_bbox: ultralytics/bbox
+  ultralytics_segm: ultralytics/segm
   sams: sams
   upscale_models: upscale_models
 YAML
+
+# sam_vit_b_01ec64.pth is a legacy-tar checkpoint — PyTorch >= 2.6 defaults
+# torch.load to weights_only=True which rejects it. Impact Pack's SAMLoader
+# calls segment_anything.build_sam → torch.load(f) with no override, so patch
+# the lib in place (baked /opt copy and venv both covered by the find roots).
+find /usr /opt -name build_sam.py -exec sed -i 's|torch\.load(f)|torch.load(f, weights_only=False)|' {} +
+
+# An early download of sam_vit_b (from dl.fbaipublicfiles.com) left a corrupt
+# tar on the volume — populate would skip it as "present". Check the exact
+# byte size of the known-good HF copy and force a re-download on mismatch.
+[ "$(stat -c%s /runpod-volume/models/sams/sam_vit_b_01ec64.pth 2>/dev/null)" != "375042383" ] && rm -f /runpod-volume/models/sams/sam_vit_b_01ec64.pth
 
 # Auto-populate the network volume on first boot (models-manifest.txt).
 # Concurrent cold workers serialize on a flock inside populate-volume.sh;
