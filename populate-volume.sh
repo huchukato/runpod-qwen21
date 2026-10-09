@@ -45,12 +45,13 @@ while IFS=$'\t' read -r sub name url; do
     mkdir -p "$M/$sub"
     ok=0
     if command -v hf >/dev/null 2>&1 && [[ "$url" =~ ^https://huggingface\.co/ ]]; then
-        # hf_transfer + Xet parallel chunks — same path as the pod provisioning
+        # hf_transfer HTTP path — xet stages chunks on the container disk
+        # (30GB cap) and dies with EDQUOT on multi-GB files.
         repo_id=$(echo "$url" | awk -F/ '{print $4"/"$5}')
         repo_path=$(echo "$url" | sed -E 's#https?://[^/]+/[^/]+/[^/]+/resolve/[^/]+/(.+)#\1#')
         tmp_dir="$M/$sub/.tmp_hf_$name"
         rm -rf "$tmp_dir"; mkdir -p "$tmp_dir"
-        export HF_HUB_ENABLE_HF_TRANSFER=1 HF_XET_HIGH_PERFORMANCE=1
+        export HF_HUB_ENABLE_HF_TRANSFER=1 HF_HUB_DISABLE_XET=1
         if hf download "$repo_id" "$repo_path" --local-dir "$tmp_dir" && [ -f "$tmp_dir/$repo_path" ]; then
             mv -f "$tmp_dir/$repo_path" "$dest"; ok=1
         fi
