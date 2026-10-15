@@ -54,21 +54,6 @@ RUN mkdir -p /opt/comfyui-baked/models/{vae,vae_approx,diffusion_models,unet,tex
 ENV HF_TOKEN=""
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Wildcards baked into TagForge (same set the pod image downloads at boot)
-# ──────────────────────────────────────────────────────────────────────────────
-RUN WILDCARD_DIR="/opt/comfyui-baked/custom_nodes/ComfyUI-TagForge/wildcards" && \
-    WILDCARD_BASE="https://github.com/huchukato/ComfyUI-Garage/raw/master/wildcards" && \
-    for wf in pmp/act.yaml pmp/actff.yaml pmp/actffm.yaml pmp/actmmf.yaml pmp/actsolo.yaml \
-              pmp/blwjob.yaml pmp/prmpt.yaml pmp/qwen21.yaml \
-              pmp/prmpt/acc.yaml pmp/prmpt/char.yaml pmp/prmpt/clths.yaml pmp/prmpt/exprss.yaml \
-              pmp/prmpt/hair.yaml pmp/prmpt/imgcmp.yaml pmp/prmpt/lctns.yaml pmp/prmpt/light.yaml pmp/prmpt/lens.yaml \
-              pmp/prmpt/pose.yaml pmp/prmpt/styles.yaml pmp/prmpt/dynmc.yaml; do \
-        mkdir -p "$WILDCARD_DIR/$(dirname "$wf")" && \
-        wget -q --tries=3 --timeout=30 "$WILDCARD_BASE/$wf" -O "$WILDCARD_DIR/$wf" || \
-        echo "⚠️ wildcard $wf download failed"; \
-    done
-
-# ──────────────────────────────────────────────────────────────────────────────
 # Serverless entrypoint + handler + workflow templates (API format)
 # ──────────────────────────────────────────────────────────────────────────────
 COPY handler.py /opt/serverless/handler.py
