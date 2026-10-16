@@ -26,7 +26,7 @@ Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, 
 
 - **GPU**: 48GB class (`ADA_48_PRO` pool — e.g. RTX 6000 Ada / L40S)
 - **Network volume**: ≥60GB attached to the endpoint at `/runpod-volume`. On first boot every worker auto-downloads missing models from `models-manifest.txt` (~45GB — the first cold start takes a while; subsequent workers reuse the volume). Disable with `VOLUME_AUTOPOPULATE=false` if you manage the volume yourself.
-- **CUDA**: 12.9+ hosts (image is CUDA 13.0)
+- **CUDA**: 13.0+ hosts (image is CUDA 13.0)
 
 ## Models (auto-provisioned)
 
