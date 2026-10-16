@@ -16,6 +16,7 @@ loras	elusarcas-qwen2-1-detailer-v1.safetensors	https://huggingface.co/reverente
 checkpoints	ilustmix_v111.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/illustrious/ilustmix_v111.safetensors
 checkpoints	pimpmypony_pmpInCaseEnhanced.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpInCaseEnhanced.safetensors
 checkpoints	pimpmypony_pmpSemiRealAnime.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpSemiRealAnime.safetensors
+checkpoints	pimpmypony_pmpIncaseStyle.safetensors	https://huggingface.co/huchukato/garage/resolve/main/checkpoints/pmp/pimpmypony_pmpIncaseStyle.safetensors
 # ── HiresFix upscaler (easy hiresFix → models/upscale_models) ──
 upscale_models	4xUltrasharp_4xUltrasharpV10.pth	https://huggingface.co/huchukato/garage/resolve/main/upscale_models/4xUltrasharp_4xUltrasharpV10.pth
 # ── Face Detailer (Easy-Use → Impact) detector models ──

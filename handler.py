@@ -39,6 +39,14 @@ COMFY_URL = "http://127.0.0.1:8188"
 WORKFLOWS_DIR = Path(os.environ.get("WORKFLOWS_DIR", "/opt/workflows"))
 JOB_TIMEOUT_S = int(os.environ.get("JOB_TIMEOUT_S", "1800"))
 
+# Workflows boot-synced from the ForgeHub repo override the baked copies, so a
+# workflow edit lands at the next cold boot without rebuilding the image.
+FH_REPO = os.environ.get("FORGEHUB_REPO", "huchukato/ForgeHub")
+FH_BRANCH = os.environ.get("FORGEHUB_BRANCH", "main")
+FH_ENDPOINT = os.environ.get("FORGEHUB_ENDPOINT_NAME", "Qwen Image 2.1")
+WF_SYNC_DIR = Path(os.environ.get("WF_SYNC_DIR", "/tmp/forgehub-workflows"))
+WF_SYNC_MANIFEST = WF_SYNC_DIR / ".manifest"
+
 # Output delivery: base64 inline under these limits, S3 offload above them.
 # RunPod's job-done callback drops results over ~20MB, so keep headroom.
 INLINE_MAX = int(os.environ.get("OUTPUT_INLINE_MAX_MB", "10")) * 1024 * 1024
@@ -95,6 +103,38 @@ def _boot_comfy():
     raise RuntimeError("ComfyUI did not become ready in 600s")
 
 
+def _sync_workflows():
+    try:
+        req = urllib.request.Request(
+            f"https://api.github.com/repos/{FH_REPO}/git/trees/{FH_BRANCH}?recursive=1",
+            headers={"Accept": "application/vnd.github+json", "User-Agent": "forgehub-worker"})
+        tree = json.loads(urllib.request.urlopen(req, timeout=60).read())
+        raw = lambda p: f"https://raw.githubusercontent.com/{FH_REPO}/{FH_BRANCH}/{p}"
+        wanted = []
+        for entry in sorted(tree.get("tree", []), key=lambda e: e["path"]):
+            mp = entry["path"]
+            if not (mp.startswith("workflows/") and mp.endswith(".meta.json")):
+                continue
+            meta = json.loads(urllib.request.urlopen(raw(mp), timeout=60).read())
+            if meta.get("endpoint_name") == FH_ENDPOINT:
+                wanted.append(mp[:-len(".meta.json")] + ".json")
+        WF_SYNC_DIR.mkdir(parents=True, exist_ok=True)
+        names = set()
+        for wp in wanted:
+            name = Path(wp).name
+            tmp = WF_SYNC_DIR / f"{name}.tmp"
+            tmp.write_bytes(urllib.request.urlopen(raw(wp), timeout=120).read())
+            os.replace(tmp, WF_SYNC_DIR / name)
+            names.add(name)
+        if WF_SYNC_MANIFEST.is_file():
+            for stale in set(WF_SYNC_MANIFEST.read_text().split()) - names:
+                (WF_SYNC_DIR / stale).unlink(missing_ok=True)
+        WF_SYNC_MANIFEST.write_text("\n".join(sorted(names)) + "\n")
+        print(f"[handler] workflow sync: {sorted(names)}", flush=True)
+    except Exception as exc:
+        print(f"[handler] workflow sync failed: {exc} — using baked workflows", flush=True)
+
+
 def _boot_in_bg():
     # ComfyUI boots on a daemon thread so the runpod handler is live (and the
     # `health` action answers) even while ComfyUI is still starting — or on
@@ -102,6 +142,7 @@ def _boot_in_bg():
     # network volume). Real jobs wait on _BOOT_DONE via _ensure_comfy().
     global _BOOT_ERR
     try:
+        _sync_workflows()
         _boot_comfy()
     except Exception as exc:
         _BOOT_ERR = exc
@@ -139,11 +180,15 @@ def _load_workflow(name):
     """Workflow templates must be saved in ComfyUI *API format* (Export API),
     where every node is keyed by id and inputs carry widget names — the UI
     format's positional widgets_values can't be patched reliably."""
-    path = WORKFLOWS_DIR / name
-    if not path.is_file():
-        path = WORKFLOWS_DIR / f"{name}.json"
-    if not path.is_file():
-        raise RuntimeError(f"workflow template not found: {name} (available: {sorted(p.name for p in WORKFLOWS_DIR.glob('*.json'))})")
+    dirs = [WF_SYNC_DIR, WORKFLOWS_DIR] if WF_SYNC_MANIFEST.is_file() else [WORKFLOWS_DIR]
+    for base in dirs:
+        path = base / name
+        if not path.is_file():
+            path = base / f"{name}.json"
+        if path.is_file():
+            break
+    else:
+        raise RuntimeError(f"workflow template not found: {name} (available: {sorted(p.name for d in dirs for p in d.glob('*.json'))})")
     wf = json.loads(path.read_text())
     if "nodes" in wf:
         raise RuntimeError(f"{name} is a UI-format graph; re-export it with 'Export API' so widgets are named")
@@ -580,7 +625,7 @@ async def handler(job):
             "status": "ok",
             "comfyui": "failed" if _BOOT_ERR else ("ready" if _BOOT_DONE.is_set() else "booting"),
             "comfyui_error": str(_BOOT_ERR) if _BOOT_ERR else None,
-            "workflows": sorted(p.name for p in WORKFLOWS_DIR.glob("*.json")),
+            "workflows": sorted({p.name for d in (WF_SYNC_DIR, WORKFLOWS_DIR) for p in d.glob("*.json")}),
             "volume_mounted": os.path.isdir("/runpod-volume"),
         }
     # Any real workload needs ComfyUI — wait for the background boot first.
