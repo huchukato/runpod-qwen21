@@ -431,6 +431,11 @@ def _patch(prompt, job):
                     inp["DropdownState"] = json.dumps(state)
             elif ct.startswith("TextEncodeQwenImage21") and isinstance(inp.get("resolution"), int):
                 inp["resolution"] = max(w, h)
+            elif ct == "easy fullLoader" and "resolution" in inp:
+                # the Pony loader's resolution combo takes the space-separated
+                # SDXL bucket strings; the latent widgets carry the same numbers
+                inp["resolution"] = f"{w} x {h}"
+                inp["empty_latent_width"], inp["empty_latent_height"] = w, h
     # Explicit encoder resolution (job["resolution"]) overrides the
     # image_size-derived value on the PixaromaDropdown / direct int input.
     res_override = job.get("resolution")
