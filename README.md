@@ -19,8 +19,8 @@ Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, 
 | Workflow | Description |
 | --- | --- |
 | `QwenImage21-T2I-Wildcards.json` | Text-to-image, wildcard expansion + QwenVL prompt enhancer, detail LoRA |
-| `QwenImageEdit21-Wildcards.json` | Instruction-based image editing (1–2 reference images) |
-| `PimpMyPony-HiResFix-FaceDet.json` | Pony/Illustrious txt2img — wildcards + TagForge, hires fix e face detailer in gruppi bypassabili |
+| `QwenImageEdit21-Wildcards.json` | Instruction-based image editing (1–2 reference images) — enhancer presets: `IMG › Storyboard` (storyboard stills from a character sheet) / `IMG › Qwen Edit` |
+| `PimpMyPony-HiResFix-FaceDet.json` | Pony/Illustrious txt2img — wildcards + TagForge, the visual resolution picker (PonyXL buckets), hires fix + face detailer in bypassable groups |
 
 ## Requirements
 
@@ -56,12 +56,13 @@ Deployed the endpoint? Drive it with ForgeHub — workflows, wildcard browsing, 
 - `workflow` — file in `/opt/workflows` (see table above), **or** pass `"prompt_graph": {…}` with a full ComfyUI API-format graph (this is what ForgeHub does)
 - `prompt` — patched into every `prompt` widget and `WildcardProcessor` node
 - `images` — URLs or base64, mapped to `LoadImage` nodes in id order
-- `image_size` / `resolution`, `seed`, `params` (`{"node:widget": value}` overrides), `vl_preset`, `enhance`
+- `image_size` — the picked size drives the Qwen workflows' canvas and the Pony loader's SDXL bucket + latent
+- `seed`, `params` (`{"node:widget": value}` overrides), `vl_preset`, `enhance`
 - `"action": "health"` — returns `{"status": "ok", "workflows": […], "volume_mounted": bool}` without running a generation
 
 ## Custom nodes baked in
 
-`ComfyUI-QwenVL-Mod` · `ComfyUI-TagForge` (wildcards) · `ComfyUI-Pixaroma` · `ComfyUI-KJNodes` · `rgthree-comfy`
+`ComfyUI-QwenVL-Mod` · `ComfyUI-TagForge` (wildcards) · `ComfyUI-Pixaroma` · `ComfyUI-KJNodes` · `rgthree-comfy` · `ComfyUI-Easy-Use` · `ComfyUI-Impact-Pack` · `ComfyUI-Impact-Subpack`
 
 ## Companion stack
 
