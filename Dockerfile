@@ -15,8 +15,11 @@ FROM huchukato/comfyui-base:cu130
 # ──────────────────────────────────────────────────────────────────────────────
 # Custom nodes — image-edit stack only (no VHS / TensorRT)
 # ──────────────────────────────────────────────────────────────────────────────
+# NODES_BUST: bump (--build-arg NODES_BUST=<n>) to re-clone the nodes when a
+# custom node repo changed but this RUN's command didn't.
+ARG NODES_BUST=0
 ENV GIT_TERMINAL_PROMPT=0
-RUN dl() { \
+RUN echo "nodes bust: ${NODES_BUST}" && dl() { \
     local user="$1" repo="$2" branch="${3:-main}" dir="$4"; \
     echo "Cloning $user/$repo ($branch) -> $dir"; \
     git clone --depth 1 --branch "$branch" "https://github.com/$user/$repo.git" "/opt/comfyui-baked/custom_nodes/$dir"; \
