@@ -247,8 +247,8 @@ def _patch(prompt, job):
             for wkey in ("preset_prompt", "enhancement_style"):
                 if wkey in inp:
                     inp[wkey] = job["vl_preset"]
-        if job.get("enhance") is False and "passthrough" in inp:
-            inp["passthrough"] = True
+        if "passthrough" in inp:
+            inp["passthrough"] = job.get("enhance") is False
         if job.get("seconds"):
             sec = int(job["seconds"])
             if "duration" in inp:
