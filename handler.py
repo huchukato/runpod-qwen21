@@ -63,6 +63,13 @@ MINIMAX_CONFIGS = {
     "10eros_turbo":      {"unet": "10eros", "steps": 8,  "sampler": "euler",         "scheduler": "simple", "shift_video": 6.0,  "shift_audio": 3.0, "lora": "fusion_turbo", "tau": 1.3},
 }
 
+# job["model"] → diffusion filename (Qwen Image 2.1 family)
+QWEN_MODELS = {
+    "standard":   "qwen_image_2.1_int8_convrot.safetensors",
+    "turbo":      "qwen_image_2.1_turbo_int8_convrot.safetensors",
+    "uncensored": "qwen-image-2.1-step90000-INT8-ConvRot-comfy.safetensors",
+}
+
 
 def _http(path, payload=None, timeout=30):
     url = COMFY_URL + path
@@ -293,6 +300,11 @@ def _patch(prompt, job):
                 found = _find_file("unet", needle) or _find_file("diffusion_models", needle)
                 if found:
                     inp["unet_name"] = found
+        elif job.get("model") in QWEN_MODELS and ct == "UNETLoader" and "unet_name" in inp:
+            target = QWEN_MODELS[job["model"]]
+            found = _find_file("diffusion_models", target) or _find_file("unet", target)
+            if found:
+                inp["unet_name"] = found
             for wkey, ckey in (("steps", "steps"), ("sampler_name", "sampler"), ("scheduler", "scheduler"),
                                ("shift_video", "shift_video"), ("shift_audio", "shift_audio")):
                 if wkey in inp and not isinstance(inp[wkey], list):
