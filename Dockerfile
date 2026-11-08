@@ -63,8 +63,6 @@ COPY handler.py /opt/serverless/handler.py
 COPY serverless-entrypoint.sh /opt/serverless/entrypoint.sh
 COPY populate-volume.sh /opt/serverless/populate-volume.sh
 COPY models-manifest.txt /opt/serverless/models-manifest.txt
-COPY workflows-api/qwen21/ /opt/workflows/
-COPY workflows-api/pony/ /opt/workflows/
 RUN chmod +x /opt/serverless/entrypoint.sh /opt/serverless/populate-volume.sh
 
 ENV COMFYUI_DIR="/workspace/runpod-slim/ComfyUI" \
