@@ -99,3 +99,9 @@ drop baked workflows-api (ForgeHub sync is the only source), manifest: turbo + u
 manifest: swap pmpInCaseEnhanced for pmpRealAnime, add realism_stable_yogi_illustrious_v55
 manifest: qwen 2.1 turbo (8-step) — the Turbo workflow needs it
 
+
+## v1.0.15
+
+handler: job.model select patches UNETLoader unet_name (standard/turbo/uncensored)
+Drop empty HF_TOKEN env var (warning noise; all manifest models are public)
+
