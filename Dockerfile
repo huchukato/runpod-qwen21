@@ -54,7 +54,6 @@ RUN bash -c 'cd /opt/comfyui-baked/custom_nodes && for node_dir in */; do \
 # ──────────────────────────────────────────────────────────────────────────────
 RUN mkdir -p /opt/comfyui-baked/models/{vae,vae_approx,diffusion_models,unet,text_encoders,clip_projections,loras,checkpoints,LLM,clip,clip_vision,ultralytics/bbox,sams}
 
-ENV HF_TOKEN=""
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Serverless entrypoint + handler + workflow templates (API format)
