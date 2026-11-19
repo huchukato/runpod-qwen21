@@ -116,7 +116,7 @@ def _sync_workflows():
             f"https://api.github.com/repos/{FH_REPO}/git/trees/{FH_BRANCH}?recursive=1",
             headers={"Accept": "application/vnd.github+json", "User-Agent": "forgehub-worker"})
         tree = json.loads(urllib.request.urlopen(req, timeout=60).read())
-        raw = lambda p: f"https://raw.githubusercontent.com/{FH_REPO}/{FH_BRANCH}/{p}"
+        raw = lambda p: f"https://raw.githubusercontent.com/{FH_REPO}/{FH_BRANCH}/{urllib.parse.quote(p, safe='/')}"
         wanted = []
         for entry in sorted(tree.get("tree", []), key=lambda e: e["path"]):
             mp = entry["path"]
