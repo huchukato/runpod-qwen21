@@ -105,3 +105,7 @@ manifest: qwen 2.1 turbo (8-step) — the Turbo workflow needs it
 handler: job.model select patches UNETLoader unet_name (standard/turbo/uncensored)
 Drop empty HF_TOKEN env var (warning noise; all manifest models are public)
 
+
+## v1.0.16
+
+handler: URL-encode workflow sync paths (filenames with spaces broke the whole sync)
