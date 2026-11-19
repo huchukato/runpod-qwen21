@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.17
+
+Fast worker registration: entrypoint materialization/volume-populate moved to a background subshell — handler.py starts immediately and ComfyUI boot waits on a prep-done marker, so cold starts and the Hub test deadline no longer include image prep
+
 ## v1.0.0
 
 Lazy ComfyUI boot + restrict Hub test to CUDA 13.x hosts
